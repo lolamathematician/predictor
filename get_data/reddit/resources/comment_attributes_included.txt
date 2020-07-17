@@ -1,0 +1,78 @@
+-'all_awardings':  []
+-'associated_award':  None
+-'author':  ts2981
+-'author_flair_background_color':  None
+-'author_flair_css_class':  None
+-'author_flair_richtext':  []
+-'author_flair_template_id':  None
+-'author_flair_text':  None
+-'author_flair_text_color':  None
+-'author_flair_type':  text
+-'author_fullname':  t2_36epb1gz
+-'author_patreon_flair':  False
+-'author_premium':  False
+-'awarders':  []
++'body':  Market is methodically moving up a fraction of a percent every week, probably through the election. But this will end very badly.
+-'collapsed_because_crowd_control':  None
++'created_utc':  1595012393
+-'gildings':  {}
+'id':  fydzdxz
+'is_submitter':  False
+'link_id':  t3_hst6nm
+-'locked':  False
+-'no_follow':  True
+'parent_id':  t3_hst6nm
++'permalink':  /r/wallstreetbets/comments/hst6nm/daily_discussion_thread_for_july_17_2020/fydzdxz/
++'retrieved_on':  1595014983
+'score':  2
+-'send_replies':  True
+-'stickied':  False
++'subreddit':  wallstreetbets
+'subreddit_id':  t5_2th52
+-'top_awarded_type':  None
+-'total_awards_received':  0
+'treatment_tags':  []
+-'created':  1595008793.0
+
+Included:
++'body':  Market is methodically moving up a fraction of a percent every week, probably through the election. But this will end very badly.
++'created_utc':  1595012393
++'permalink':  /r/wallstreetbets/comments/hst6nm/daily_discussion_thread_for_july_17_2020/fydzdxz/
++'retrieved_on':  1595014983
++'subreddit':  wallstreetbets
+
+Undecided (included for now):
+'id':  fydzdxz
+'is_submitter':  False
+'link_id':  t3_hst6nm
+'parent_id':  t3_hst6nm
+'score':  2
+'subreddit_id':  t5_2th52
+
+Undecided (excluded for now):
+'treatment_tags':  []
+
+Excluded:
+-'all_awardings':  []
+-'associated_award':  None
+-'author':  ts2981
+-'author_flair_background_color':  None
+-'author_flair_css_class':  None
+-'author_flair_richtext':  []
+-'author_flair_template_id':  None
+-'author_flair_text':  None
+-'author_flair_text_color':  None
+-'author_flair_type':  text
+-'author_fullname':  t2_36epb1gz
+-'author_patreon_flair':  False
+-'author_premium':  False
+-'awarders':  []
+-'collapsed_because_crowd_control':  None
+-'gildings':  {}
+-'locked':  False
+-'no_follow':  True
+-'send_replies':  True
+-'stickied':  False
+-'top_awarded_type':  None
+-'total_awards_received':  0
+-'created':  1595008793.0
