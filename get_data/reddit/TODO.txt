@@ -1,0 +1,4 @@
+Increase speed of getting data. Almost all run time is spent filtering results. Ideas to test faster method:
+Get rid of readable times calculations
+Use generator with list of keys to create filtered data dicts (will mean no readable times - could just use the date rather than using datetime to calculate datetime)
+Use other language to do this - Save all attributes and filter down to comment_attributes_included.txt using c or java.
