@@ -10,18 +10,23 @@ ONE_DAY = timedelta(days=1)
 def convert_utc_to_readable_time(utc_time):
 	return datetime.utcfromtimestamp(utc_time).strftime('%Y-%m-%d %H:%M:%S')
 
-def retrieve_comments(api, batch_date):
+def retrieve_results(api, batch_date):
 	print('Retrieving results.')
 	batch_end_date = batch_date + ONE_DAY
 	batch_start_epoch = int(batch_date.timestamp())
 	batch_end_epoch = int(batch_end_date.timestamp())
-	results = api.search_comments(subreddit='wallstreetbets',
+	comment_results = api.search_comments(subreddit='wallstreetbets',
 								  after=batch_start_epoch,
 								  before=batch_end_epoch,
 								  filter=['created_utc', 'permalink', 'body', 'retrieved_on', 'subreddit', 'id', 'is_submitter', 'link_id', 'parent_id', 'score', 'subreddit_id'])
-	results = [result for result in results]
+	comment_results = api.search_submissions(subreddit='wallstreetbets',
+								  after=batch_start_epoch,
+								  before=batch_end_epoch,
+								  filter=[])
+	comment_results = [comment_result for comment_result in comment_results]
+	submission_results = [submission_result for submission_result in submission_results]
 	print('Results retrieved.')
-	return results
+	return comment_results, submission_results
 
 # filter_results replaced with the filter argument from psaw
 """
@@ -46,13 +51,13 @@ def filter_results(results):
 	return filtered_results
 """
 
-def write_comments(comment_list, batch_date):
-	print('Writing results.')
-	file_name = 'comments/{year}-{month}-{day}-comments.comment'.format(year=batch_date.year, month=batch_date.month, day=batch_date.day)
+def write_results(result_type, results_list, batch_date):
+	print('Writing {result_type}.'.format(result_type=result_type))
+	file_name = '{type}/{year}-{month}-{day}-{result_type}s.{result_type}'.format(year=batch_date.year, month=batch_date.month, day=batch_date.day, result_type=result_type)
 	with open(file_name, 'w', encoding='utf8') as f:
-		for comment in comment_list:
+		for result in results:
 			try:
-				f.write(str(comment) + '\n')
+				f.write(str(results_list) + '\n')
 			except UnicodeEncodeError as error:
 				print('Character error (should no longer be an emoji causing this):\n' + str(error))
 	print('Results written to {file_name}.'.format(file_name=file_name))
@@ -60,9 +65,10 @@ def write_comments(comment_list, batch_date):
 
 def retrieve_batch(api, batch_date):
 	batch_run_start_time = time.time()
-	comments = retrieve_comments(api, batch_date)
-	filtered_results = filter_results(comments)
-	write_comments(filtered_results, batch_date)
+	comments, submissions = retrieve_results(api, batch_date)
+	# filtered_results = filter_results(comments) DEPRECATED now we filter on result retrieval
+	write_results('comment', comments, batch_date)
+	write_results('submission', submissions, batch_date)
 
 def main():
 	api = PushshiftAPI()
