@@ -17,10 +17,14 @@ def retrieve_comments(api, batch_date):
 	batch_end_epoch = int(batch_end_date.timestamp())
 	results = api.search_comments(subreddit='wallstreetbets',
 								  after=batch_start_epoch,
-								  before=batch_end_epoch)
-	print('Results retrieved.'.format(year=batch_date.year, month=batch_date.month, day=batch_date.day))
+								  before=batch_end_epoch,
+								  filter=['created_utc', 'permalink', 'body', 'retrieved_on', 'subreddit', 'id', 'is_submitter', 'link_id', 'parent_id', 'score', 'subreddit_id'])
+	results = [result for result in results]
+	print('Results retrieved.')
 	return results
 
+# filter_results replaced with the filter argument from psaw
+"""
 def filter_results(results):
 	print('Filtering results.')
 	filtered_results = [{'created_utc': result.d_['created_utc'],
@@ -40,6 +44,7 @@ def filter_results(results):
 	number_of_results = len(filtered_results)
 	print('Results filtered. Total results: {number_of_results}'.format(number_of_results=number_of_results))
 	return filtered_results
+"""
 
 def write_comments(comment_list, batch_date):
 	print('Writing results.')
