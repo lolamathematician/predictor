@@ -3,8 +3,8 @@ from datetime import datetime, timedelta
 import time
 
 # NUMBER_OF_COMMENTS_TO_RETRIEVE = 10 # DEPRECATED
-START_DATE = datetime(year=2020, month=2, day=1)
-END_DATE = datetime(year=2020, month=2, day=29) # Inclusive
+START_DATE = datetime(year=2020, month=3, day=1)
+END_DATE = datetime(year=2020, month=5, day=31) # Inclusive
 ONE_DAY = timedelta(days=1)
 
 def convert_utc_to_readable_time(utc_time):
@@ -57,8 +57,10 @@ def filter_results(results):
 
 def write_results(result_type, results_list, batch_date):
 	date_string = get_date_string(batch_date)
+	year = batch_date.strftime('%Y')
+	month = batch_date.strftime('%m')
 	print('{date_string} Writing {result_type}s.'.format(date_string=date_string, result_type=result_type))
-	file_name = 'data/{result_type}s/{date_string}-{result_type}s-unfiltered.{result_type}'.format(date_string=date_string, result_type=result_type)
+	file_name = 'data/{result_type}s/{year}/{month}/{date_string}-{result_type}s-unfiltered.{result_type}'.format(result_type=result_type, year=year, month=month, date_string=date_string)
 	with open(file_name, 'w', encoding='utf8') as f:
 		for result in results_list:
 			try:
@@ -86,8 +88,8 @@ def check_time(start_time, batch_date, month_times):
 def record_times(month_times, start_date, end_date):
 	start_date_string  = get_date_string(start_date)
 	end_date_string = get_date_string(end_date)
-	time_period_string = '{start_date_string}-{end_date_string}'.format(start_date=start_date_string, end_date=end_date_string)
-	times_file = "retrieval_times/{time_period_string}-times.time".format(time_period_string=time_period_string)
+	time_period_string = '{start_date_string}-{end_date_string}'.format(start_date_string=start_date_string, end_date=end_date_string)
+	times_file = "data/retrieval_times/{time_period_string}-times.time".format(time_period_string=time_period_string)
 	with open(times_file, 'a') as f:
 		output_string = time_period_string
 		for month_time in month_times:
