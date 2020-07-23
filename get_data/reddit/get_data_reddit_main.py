@@ -26,12 +26,8 @@ def retrieve_results(api, batch_date):
 	batch_end_date = batch_date + ONE_DAY
 	batch_start_epoch = int(batch_date.timestamp())
 	batch_end_epoch = int(batch_end_date.timestamp())
-	comment_results = api.search_comments(subreddit='wallstreetbets',
-								  after=batch_start_epoch,
-								  before=batch_end_epoch)
-	submission_results = api.search_submissions(subreddit='wallstreetbets',
-								  after=batch_start_epoch,
-								  before=batch_end_epoch)
+	comment_results = api.search_comments(subreddit='wallstreetbets', after=batch_start_epoch, before=batch_end_epoch)
+	submission_results = api.search_submissions(subreddit='wallstreetbets', after=batch_start_epoch, before=batch_end_epoch)
 	comment_results = [comment_result.d_ for comment_result in comment_results]
 	submission_results = [submission_result.d_ for submission_result in submission_results]
 	print('{current_time} {results_date} Results retrieved.'.format(current_time=current_time, results_date=date_string))
