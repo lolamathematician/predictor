@@ -37,29 +37,6 @@ def retrieve_results(api, batch_date):
 	print('{current_time} {results_date} Results retrieved.'.format(current_time=current_time, results_date=date_string))
 	return comment_results, submission_results
 
-# DEPRECATED filter_results replaced with the filter argument from psaw
-"""
-def filter_results(results):
-	print('Filtering results.')
-	filtered_results = [{'created_utc': result.d_['created_utc'],
-						 'created_datetime': convert_utc_to_readable_time(result.d_['created_utc']),
-						 'permalink': result.d_['permalink'],
-						 'body': result.d_['body'],
-						 'retrieved_on': result.d_['retrieved_on'],
-						 'retrieved_on_datetime': convert_utc_to_readable_time(result.d_['retrieved_on']),
-						 'subreddit': result.d_['subreddit'],
-						 'id': result.d_['id'],
-						 'is_submitter': result.d_['is_submitter'],
-						 'link_id': result.d_['link_id'],
-						 'parent_id': result.d_['parent_id'],
-						 'score': result.d_['score'],
-						 'subreddit_id': result.d_['subreddit_id']}
-						 for result in results]
-	number_of_results = len(filtered_results)
-	print('Results filtered. Total results: {number_of_results}'.format(number_of_results=number_of_results))
-	return filtered_results
-"""
-
 def write_results(result_type, results_list, batch_date):
 	date_string = get_date_string(batch_date)
 	current_time = get_current_time()
@@ -80,34 +57,8 @@ def write_results(result_type, results_list, batch_date):
 def retrieve_batch(api, batch_date):
 	batch_run_start_time = time.time()
 	comments, submissions = retrieve_results(api, batch_date)
-	# filtered_results = filter_results(comments) DEPRECATED now we filter on result retrieval
 	write_results('comment', comments, batch_date)
 	write_results('submission', submissions, batch_date)
-
-# HOPEFULLY DEPRECATED
-"""
-# records times taken to retrieve one month's worth of data
-def check_time(start_time, batch_date, month_times):
-	next_day = (batch_date + ONE_DAY).day
-	if next_day == 1:
-		time_since_start = round(time.time()-start_time, 2)
-		print('Time taken: {time_since_start}'.format(time_since_start=time_since_start))
-		month_times.append(str(time_since_start))
-"""
-
-# HOPEFULLY DEPRECATED
-"""
-def record_times(month_times, start_date, end_date):
-	start_date_string  = get_date_string(start_date)
-	end_date_string = get_date_string(end_date)
-	time_period_string = '{start_date_string}-{end_date_string}'.format(start_date_string=start_date_string, end_date=end_date_string)
-	times_file = "retrieval_times/{time_period_string}-times.time".format(time_period_string=time_period_string)
-	with open(times_file, 'a') as f:
-		output_string = time_period_string
-		for month_time in month_times:
-			output_string += ' {month_time}'.format(month_time=month_time)
-		f.write(output_string + '\n')
-"""
 
 def record_batch_time(batch_date, batch_start_time):
 	batch_finish_time = datetime.utcnow()
