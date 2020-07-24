@@ -1,5 +1,5 @@
 *.comment
 *.submission
-*.time
+*.stats
 *get_data_reddit_main_second_date_set.py
 *test.py

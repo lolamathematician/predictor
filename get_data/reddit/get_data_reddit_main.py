@@ -3,8 +3,8 @@ from datetime import datetime, timedelta
 import time
 
 # NUMBER_OF_COMMENTS_TO_RETRIEVE = 10 # DEPRECATED
-START_DATE = datetime(year=2020, month=1, day=1)
-END_DATE = datetime(year=2020, month=1, day=2) # Inclusive
+START_DATE = datetime(year=2020, month=3, day=20)
+END_DATE = datetime(year=2020, month=5, day=31) # Inclusive
 ONE_DAY = timedelta(days=1)
 
 def convert_utc_to_readable_time(utc_time):
@@ -49,21 +49,24 @@ def write_results(result_type, results_list, batch_date):
 	capitalised_result_type = result_type.capitalize()
 	print('{current_time} {results_date} {capitalised_result_type}s written to {file_name}.'.format(current_time=current_time, results_date=date_string, capitalised_result_type=capitalised_result_type, file_name=file_name))
 
-
 def retrieve_batch(api, batch_date):
+	batch_start_time = datetime.utcnow()
 	batch_run_start_time = time.time()
 	comments, submissions = retrieve_results(api, batch_date)
 	write_results('comment', comments, batch_date)
 	write_results('submission', submissions, batch_date)
+	number_of_comments = len(comments)
+	number_of_submissions = len(submissions)
+	record_batch_time(batch_date, batch_start_time, number_of_comments, number_of_submissions)
 
-def record_batch_time(batch_date, batch_start_time):
+def record_batch_time(batch_date, batch_start_time, number_of_comments, number_of_submissions):
 	batch_finish_time = datetime.utcnow()
 	date_string = get_date_string(batch_date)
 	current_time = get_current_time()
 	run_time = batch_finish_time - batch_start_time
 	print('{current_time} {results_date} Batch run time {run_time}.'.format(current_time=current_time, results_date=date_string, run_time=run_time))
-	with open('data/retrieval_times/times.time', 'a') as f:
-		batch_time_record = '{results_date} {run_time}\n'.format(results_date=date_string, run_time=run_time)
+	with open('data/batch_statistics/batch_statistics.stats', 'a') as f:
+		batch_time_record = '{results_date} {run_time} {number_of_comments} {number_of_submissions}\n'.format(results_date=date_string, run_time=run_time, number_of_comments=number_of_comments, number_of_submissions=number_of_submissions)
 		f.write(batch_time_record)
 
 def main():
@@ -71,9 +74,9 @@ def main():
 	batch_date = START_DATE
 	# Do them in daily batches
 	while batch_date <= END_DATE:
-		batch_start_time = datetime.utcnow()
+		# batch_start_time = datetime.utcnow()
 		retrieve_batch(api, batch_date)
-		record_batch_time(batch_date, batch_start_time)
+		# record_batch_time(batch_date, batch_start_time)
 		batch_date = batch_date + ONE_DAY
 
 if __name__ == '__main__':
