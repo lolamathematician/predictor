@@ -13,8 +13,8 @@ void ResultProcessor::configure(vector<string>& fields_to_keep){
 
 unordered_map<string, string> ResultProcessor::process_one(unordered_map<string, string>& result_to_process){
     unordered_map<string, string> processed_result;
-    for(uint i = 0; i < this->FieldsToKeep.size(); i++){
-        processed_result[this->FieldsToKeep[i]] = result_to_process.at(this->FieldsToKeep[i]);
+    for(auto & i : this->FieldsToKeep){
+        processed_result[i] = result_to_process.at(i);
     }
     return processed_result;
 }
@@ -28,7 +28,7 @@ vector<unordered_map<string, string>> ResultProcessor::process_many(vector<unord
     return processed_results;
 }
 
-PYBIND11_MODULE(process_results, m){
+PYBIND11_MODULE(predictor, m){
     py::class_<ResultProcessor>(m, "ResultProcessor")
     .def(py::init<>())
     .def("configure", &ResultProcessor::configure)

@@ -1,15 +1,5 @@
 /home/Mrjoeybux/programs/clion-2020.1.1/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/Mrjoeybux/coding/Predictor/get_data/reddit/c++
-CMake Error at CMakeLists.txt:13 (add_subdirectory):
-  The source directory
-
-    /home/Mrjoeybux/coding/Predictor/get_data/reddit/c++/pybind11
-
-  does not contain a CMakeLists.txt file.
-
-
-CMake Error at CMakeLists.txt:17 (pybind11_add_module):
-  Unknown CMake command "pybind11_add_module".
-
-
--- Configuring incomplete, errors occurred!
-See also "/home/Mrjoeybux/coding/Predictor/get_data/reddit/c++/CMakeFiles/CMakeOutput.log".
+-- pybind11 v2.5.dev1
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/Mrjoeybux/coding/Predictor/get_data/reddit/c++
