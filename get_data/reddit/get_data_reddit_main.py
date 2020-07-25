@@ -85,26 +85,39 @@ def record_batch_time(batch_date, batch_start_time, number_of_comments, number_o
 def load_fields_to_keep():
 	config = configparser.ConfigParser()
 	config.read('./resources/config.ini')
-	fields, bools = zip(*config.items("RESULT_PROCESSING_FIELDS_TO_KEEP"))
+	fields, bools = zip(*config.items("COMMENT_FILTERING_FIELDS_TO_KEEP"))
 	return [fields[i] for i in range(len(fields)) if bools[i] == "True"]
 
 
-# Creates ResultProcessor object and configures it with desired fields.
-def load_result_processor():
-	rp = predictor.ResultProcessor()
+class CommentFilter():
+	def __init__(self):
+		self.fields_to_keep = None
+
+	def configure(self, fields_to_keep):
+		self.fields_to_keep = fields_to_keep
+
+	def filter(self, comments):
+		if isinstance(comments, dict):
+			comments = [comments]
+		return [self._filter_one(comment) for comment in comments]
+
+	def _filter_one(self, comment):
+		return {field_we_want: comment[field_we_want] for field_we_want in self.fields_to_keep}
+
+
+# Creates CommentFilter object and configures it with desired fields.
+def load_comment_filter():
+	cf = CommentFilter()
 	fields_to_keep = load_fields_to_keep()
-	rp.configure(fields_to_keep)
-	return rp
+	cf.configure(fields_to_keep)
+	return cf
 
 
-# Requires pre-configured ResultProcessor object and batch of results.
-# Batch of results should be provided as list of dicts, or dict if one result.
-# Processes said results.
-def process_results(result_processor, results):
-	# TODO POSSIBLY REMOVE IF BRANCH
-	if len(results) == 1:
-		return result_processor.process_one(results)
-	return result_processor.process_many(results)
+# Requires pre-configured CommentFilter object and batch of comments.
+# Batch of comments should be provided as list of dicts, or dict if one result.
+# Filters said comments.
+def filter_comments(comment_filter, comments):
+	return comment_filter.filter(comments)
 
 
 def main():
