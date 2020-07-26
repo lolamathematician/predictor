@@ -9,6 +9,8 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 import ahocorasick
 from math import nan
 import configparser
+import multiprocessing as mp
+import time
 
 tickers = {0: "TSLA",
            1: "MSFT"}
@@ -101,6 +103,16 @@ class DefaultVaderAnalyser(SentimentAnalyser):
         return self.analyser.polarity_scores(clean_text)
 
 
+def mp_text_processing_init(mode):
+    global __text_processor
+    processor = construct_text_processing_pipeline(mode)
+    __text_processor = processor
+
+
+def mp_batch_process(message_and_id_tuple):
+    return __text_processor.process(message_and_id_tuple[0], message_and_id_tuple[1])
+
+
 class TextProcessor:
     def __init__(self, ticker_searcher: TickerSearch, cleaner: TextCleaner,
                  analyser: SentimentAnalyser, score_extractor: ScoreExtractor):
@@ -109,12 +121,24 @@ class TextProcessor:
         self.analyser = analyser
         self.score_extractor = score_extractor
 
-    def process(self, messy_text_body, id):
+    def process(self, messy_text_body, text_id):
         tickers_in_text = self.ticker_searcher.search(messy_text_body)
         if tickers_in_text is NO_TICKER_ID:
-            return {"id": id, "sentiment_score": nan, "tickers": NO_TICKER_ID}
+            return {"id": text_id, "sentiment_score": nan, "tickers": NO_TICKER_ID}
         sentiment_score = self.score_extractor(self.analyser.analyse(self.cleaner.clean(messy_text_body)))
-        return {"id": id, "sentiment_score": sentiment_score, "tickers": "_".join(tickers_in_text)}
+        return {"id": text_id, "sentiment_score": sentiment_score, "tickers": "_".join(tickers_in_text)}
+
+    def mp_batch_process(self, data, config_mode, num_processes):
+        # MAYBE get_context("spawn")
+        processor_pool = mp.Pool(num_processes, initializer=mp_text_processing_init, initargs=(config_mode, ))
+        results = processor_pool.map(mp_batch_process, data)
+        processor_pool.close()
+        processor_pool.join()
+        return results
+
+    def batch_process_serial(self, data):
+        return [self.process(text, text_id) for text, text_id in data]
+
 
 
 def ticker_search_constructor(key):
@@ -174,23 +198,21 @@ def construct_text_processing_pipeline(mode):
     lemmatiser = lemmatiser_constructor(process_cfg["LEMMATISER"])
     scorer = scorer_constructor(process_cfg["SCORER"])
     analyser = analyser_constructor(process_cfg["ANALYSER"])
-    cleaner = TextCleaner(tokeniser=tokeniser, lemmatiser = lemmatiser)
+    cleaner = TextCleaner(tokeniser=tokeniser, lemmatiser=lemmatiser)
     return TextProcessor(ticker_searcher=ticker_searcher, cleaner=cleaner, analyser=analyser, score_extractor=scorer)
 
 
 def test(mode):
-    no_ticker_text = "Well I actually bought 100 shares on Friday. Sold a covered call 0dte for $5 and also sold 2 cash covered  0dte puts for about $45. \n\nThe puts expired about .15 away from the money and werenโ€t exercised so made more money just selling puts and will continue doing that."
-    no_ticker_id = "no_ticker_id"
-
+    DATA_SIZE = 100000
     ticker_text = "Well I actually bought 100 shares of TSLA on Friday. Sold a covered call 0dte for $5 and also sold 2 cash covered  0dte puts for about $45. \n\nThe puts expired about .15 away from the money and werenโ€t exercised so made more money just selling puts and will continue doing that."
-    ticker_id = "ticker_id"
-
-    text_and_ids = [(no_ticker_text, no_ticker_id), (ticker_text, ticker_id)]
-
-    test_processor = construct_text_processing_pipeline(mode)
-    for text, id in text_and_ids:
-        print(test_processor.process(text, id))
-
+    data = [(ticker_text, i) for i in range(DATA_SIZE)]
+    text_processor = construct_text_processing_pipeline(mode)
+    start = time.time()
+    text_processor.mp_batch_process(data, mode, 4)
+    print("parallel time: {0:.3f}".format(time.time() - start))
+    start = time.time()
+    text_processor.batch_process_serial(data)
+    print("serial time: {0:.3f}".format(time.time() - start))
 
 if __name__ == "__main__":
     test("STANDARD")
