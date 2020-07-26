@@ -1,0 +1,20 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/mrjoeybux/coding/Predictor/get_data/reddit/c++/process_results.cpp
+process_results.h
+/home/mrjoeybux/coding/Predictor/get_data/reddit/c++/process_results.h
+
+/home/mrjoeybux/coding/Predictor/get_data/reddit/c++/process_results.h
+vector
+-
+string
+-
+unordered_map
+-
+

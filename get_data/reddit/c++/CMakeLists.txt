@@ -1,0 +1,17 @@
+cmake_minimum_required(VERSION 3.10)
+project(process_results)
+
+add_library(my_python3.7m SHARED IMPORTED)
+#set(CMAKE_CXX_STANDARD 14)
+#set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
+#set(pybind11_DIR /home/mrjoeybux/programs/anaconda2/envs/py36/share/cmake/pybind11)
+
+#include(FindPythonAnaconda)
+#set(PYTHON_INCLUDE_DIR "/home/mrjoeybux/programs/anaconda2/include/python3.6m")
+#set(PYTHON_LIBRARY "/home/mrjoeybux/programs/anaconda2/lib/libpython3.6m.so")
+#include_directories(${PYTHON_INCLUDE_DIRS})
+add_subdirectory(pybind11)
+#include_directories(${PYTHON_INCLUDE_DIR})
+#add_subdirectory(pybind11)
+#add_executable(process_results process_results.cpp)
+pybind11_add_module(process_results process_results.cpp)
