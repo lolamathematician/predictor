@@ -7,7 +7,7 @@ import os
 
 ONE_DAY = timedelta(days=1)
 START_DATE = datetime(year=2019, month=1, day=1)
-END_DATE = datetime(year=2020, month=7, day=25)
+END_DATE = datetime(year=2020, month=7, day=25) #Minor change
 
 class database:
 
