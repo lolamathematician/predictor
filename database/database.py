@@ -6,12 +6,6 @@ from collections import defaultdict
 import ast
 import os
 
-from pprint import pprint
-
-
-START_DATE = datetime(year=2019, month=1, day=1)
-END_DATE = datetime(year=2020, month=7, day=25)
-
 class database:
 
 	def __init__(self):
@@ -139,8 +133,29 @@ class database:
 					d[key] = str(d[key])
 		return dicts
 
-if __name__ == '__main__':
-	d = database()
-	d.set_database('database.db')
-	d.create_tables()
-	d.write_dates(START_DATE, END_DATE)
+	def read_results(self, schema, start_date, end_date, fields):
+		start_date_utc = str(int(start_date.timestamp()))
+		end_date_utc = str(int(end_date.timestamp()))
+		print(start_date_utc)
+		print(end_date_utc)
+		field_string = ''
+		for field in fields:
+			field_string = field_string + '{field}, '.format(field=field)
+		field_string = field_string[:-2]
+		sql = """
+				SELECT {field_string}
+				FROM {schema}
+				WHERE created_utc BETWEEN {start_date_utc} AND {end_date_utc}
+			  """.format(field_string=field_string, schema=schema, start_date_utc=start_date_utc, end_date_utc=end_date_utc)
+		self.create_connection()
+		curs = self.conn.cursor()
+		curs.execute(sql)
+		rows = curs.fetchall()
+		return rows
+
+# if __name__ == '__main__':
+# 	START_DATE = datetime(year=2020, month=1, day=1)
+# 	END_DATE = datetime(year=2020, month=1, day=2)
+# 	d = database()
+# 	d.set_database('database.db')
+# 	d.read_results('comments', START_DATE, END_DATE, ['id', 'body'])
