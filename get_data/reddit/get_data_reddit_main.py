@@ -4,7 +4,7 @@ import time
 
 # NUMBER_OF_COMMENTS_TO_RETRIEVE = 10 # DEPRECATED
 START_DATE = datetime(year=2020, month=7, day=11)
-END_DATE = datetime(year=2020, month=7, day=25) # Inclusive
+END_DATE = datetime(year=2020, month=7, day=25) # Inclusive minor change
 ONE_DAY = timedelta(days=1)
 
 def convert_utc_to_readable_time(utc_time):
