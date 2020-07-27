@@ -3,8 +3,8 @@ from datetime import datetime, timedelta
 import time
 
 # NUMBER_OF_COMMENTS_TO_RETRIEVE = 10 # DEPRECATED
-START_DATE = datetime(year=2018, month=1, day=1)
-END_DATE = datetime(year=2018, month=12, day=31) # Inclusive
+START_DATE = datetime(year=2017, month=1, day=1)
+END_DATE = datetime(year=2017, month=12, day=31) # Inclusive
 ONE_DAY = timedelta(days=1)
 
 def convert_utc_to_readable_time(utc_time):
