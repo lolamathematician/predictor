@@ -1,0 +1,18 @@
+20200101-20200131
+
+db = 127MB
+folder = 211MB
+
+db comments = 250571
+db submissions = 6174
+
+20200101-20200107
+
+bd = 26.2MB
+folder = 47.41MB
+
+db comments = 51457
+db submissions = 1375
+
+folder comments = 51457
+folder submissions = 1375
