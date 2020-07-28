@@ -1,4 +1,8 @@
+import sys
+sys.path.insert(0, "./c++/")
+import predictor
 from psaw import PushshiftAPI
+import configparser
 from datetime import datetime, timedelta
 import time
 
@@ -7,17 +11,21 @@ START_DATE = datetime(year=2020, month=7, day=11)
 END_DATE = datetime(year=2020, month=7, day=25) # Inclusive minor change
 ONE_DAY = timedelta(days=1)
 
+
 def convert_utc_to_readable_time(utc_time):
 	readable_time = datetime.utcfromtimestamp(utc_time).strftime('%Y-%m-%d %H:%M:%S')
 	return readable_time
+
 
 def get_date_string(batch_date):
 	date_string = batch_date.strftime('%Y%m%d')
 	return date_string
 
+
 def get_current_time():
 	current_time = datetime.utcnow().strftime('%H:%M:%S')
 	return current_time	
+
 
 def retrieve_results(api, batch_date):
 	date_string = get_date_string(batch_date)
@@ -32,6 +40,7 @@ def retrieve_results(api, batch_date):
 	submission_results = [submission_result.d_ for submission_result in submission_results]
 	print('{current_time} {results_date} Results retrieved.'.format(current_time=current_time, results_date=date_string))
 	return comment_results, submission_results
+
 
 def write_results(result_type, results_list, batch_date):
 	date_string = get_date_string(batch_date)
@@ -49,6 +58,7 @@ def write_results(result_type, results_list, batch_date):
 	capitalised_result_type = result_type.capitalize()
 	print('{current_time} {results_date} {capitalised_result_type}s written to {file_name}.'.format(current_time=current_time, results_date=date_string, capitalised_result_type=capitalised_result_type, file_name=file_name))
 
+
 def retrieve_batch(api, batch_date):
 	batch_start_time = datetime.utcnow()
 	batch_run_start_time = time.time()
@@ -58,6 +68,7 @@ def retrieve_batch(api, batch_date):
 	number_of_comments = len(comments)
 	number_of_submissions = len(submissions)
 	record_batch_time(batch_date, batch_start_time, number_of_comments, number_of_submissions)
+
 
 def record_batch_time(batch_date, batch_start_time, number_of_comments, number_of_submissions):
 	batch_finish_time = datetime.utcnow()
@@ -69,6 +80,46 @@ def record_batch_time(batch_date, batch_start_time, number_of_comments, number_o
 		batch_time_record = '{results_date} {run_time} {number_of_comments} {number_of_submissions}\n'.format(results_date=date_string, run_time=run_time, number_of_comments=number_of_comments, number_of_submissions=number_of_submissions)
 		f.write(batch_time_record)
 
+
+# Reads config and creates list of desired fields.
+def load_fields_to_keep():
+	config = configparser.ConfigParser()
+	config.read('./resources/config.ini')
+	fields, bools = zip(*config.items("COMMENT_FILTERING_FIELDS_TO_KEEP"))
+	return [fields[i] for i in range(len(fields)) if bools[i] == "True"]
+
+
+class CommentFilter():
+	def __init__(self):
+		self.fields_to_keep = None
+
+	def configure(self, fields_to_keep):
+		self.fields_to_keep = fields_to_keep
+
+	def filter(self, comments):
+		if isinstance(comments, dict):
+			comments = [comments]
+		return [self._filter_one(comment) for comment in comments]
+
+	def _filter_one(self, comment):
+		return {field_we_want: comment[field_we_want] for field_we_want in self.fields_to_keep}
+
+
+# Creates CommentFilter object and configures it with desired fields.
+def load_comment_filter():
+	cf = CommentFilter()
+	fields_to_keep = load_fields_to_keep()
+	cf.configure(fields_to_keep)
+	return cf
+
+
+# Requires pre-configured CommentFilter object and batch of comments.
+# Batch of comments should be provided as list of dicts, or dict if one result.
+# Filters said comments.
+def filter_comments(comment_filter, comments):
+	return comment_filter.filter(comments)
+
+
 def main():
 	api = PushshiftAPI()
 	batch_date = START_DATE
@@ -78,6 +129,7 @@ def main():
 		retrieve_batch(api, batch_date)
 		# record_batch_time(batch_date, batch_start_time)
 		batch_date = batch_date + ONE_DAY
+
 
 if __name__ == '__main__':
 	main()

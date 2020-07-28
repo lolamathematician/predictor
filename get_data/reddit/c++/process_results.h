@@ -8,7 +8,7 @@ class ResultProcessor{
 private:
     vector<string> FieldsToKeep;
 public:
-    ResultProcessor(){{]}};
+    ResultProcessor()= default;;
 
     unordered_map<string, string> process_one(unordered_map<string, string>& result_to_process);
 
